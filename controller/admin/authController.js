@@ -157,6 +157,7 @@ export const refreshToken = asyncHandler(async (req, res) => {
   let payload;
   try {
     payload = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+    console.log(payload)
   } catch (err) {
     await deleteRefreshTokenCache(token)
     return res.status(403).json({ message: "Invalid refresh token" });
@@ -188,7 +189,7 @@ export const refreshToken = asyncHandler(async (req, res) => {
                 LOGOUT
 ==========================================================*/
 export const logoutUser = asyncHandler(async (req, res) => {
-  const token = req.cookies?.refreshToken;
+  const token = req.cookies?.adminRefreshToken;
   if (token) {
     await deleteRefreshTokenCache(token);
   }
