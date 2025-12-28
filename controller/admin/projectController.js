@@ -25,30 +25,3 @@ export const getAllProjects = asyncHandler(async (req, res) => {
         return res.status(500).json({ success: false, message: error.message });
     }
 })
-// export const getAllProject = asyncHandler(async (req, res) => {
-//     try {
-//         const {
-//             search,
-//             category,
-//             status,
-//             featured,
-//             visibility = "public",
-//             page = 1,
-//             sort = "-createdAt",
-//             limit,
-//         } = req.query;
-
-//         // ✅ Redis cache key তৈরি
-//         const cacheKey = JSON.stringify(req.query);
-
-//         const cached = await getProductsCache(cacheKey);
-
-//         if (cached) {
-//             return res.status(200).json(cached);
-//         }
-
-//     } catch (err) {
-//         console.error(err);
-//         return res.status(500).json({ success: false, message: err.message });
-//     }
-// })
