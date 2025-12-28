@@ -1,5 +1,5 @@
 import express from "express"
-import { getAllProjects, projectAdd } from "../../controller/admin/projectController.js"
+import { deleteProjects, getAllProjects, projectAdd, updateProjects } from "../../controller/admin/projectController.js"
 import { verifyJWT } from "../../middlewares/authMiddlewares.js"
 
 const router = express.Router()
@@ -10,5 +10,8 @@ router.post("/", projectAdd)
 
 router.get("/", getAllProjects)
 
+router.put("/:id", updateProjects)
+
+router.delete("/:id", deleteProjects)
 
 export default router
