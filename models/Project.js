@@ -15,31 +15,9 @@ const ProjectSchema = new mongoose.Schema({
     index: true,
   },
 
-//   slug: {
-//     type: String,
-//     required: true,
-//     unique: true,
-//     lowercase: true,
-//     index: true,
-//   },
-
   category: {
     type: String,
     required: true,
-    enum: ["Residential", "Commercial", "Office", "Restaurant", "Hotel"],
-    index: true,
-  },
-
-//   projectType: {
-//     type: String,
-//     enum: ["renovation", "new-design", "remodeling"],
-//     required: true,
-//   },
-
-  status: {
-    type: String,
-    enum: ["completed", "ongoing", "upcoming"],
-    default: "completed",
     index: true,
   },
 
@@ -54,12 +32,12 @@ const ProjectSchema = new mongoose.Schema({
   },
 
   budgetRange: {
-    type: String, // ৳5L – ৳10L
+    type: String, 
     index: true,
   },
 
   completionTime: {
-    type: String, // 45 days / 3 months
+    type: String, 
   },
 
   image: {
@@ -67,44 +45,16 @@ const ProjectSchema = new mongoose.Schema({
     required: true,
   },
 
-//   galleryImages: {
-//     type: [String],
-//     validate: [arr => arr.length > 0, "At least one gallery image required"]
-//   },
-
-  beforeAfterImages: {
-    type: [String],
-  },
-
-  videoURL: String,
-  floorPlanImage: String,
-
-  designStyle: {
-    type: String,
-    index: true,
-  },
-
-  colorPalette: [String],
-  materialsUsed: [String],
-  furnitureType: [String],
-  lightingType: String,
-  ceilingType: String,
+  // galleryImages: {
+  //   type: [String],
+  //   validate: [arr => arr.length > 0, "At least one gallery image required"]
+  // },
 
   shortDescription: {
     type: String,
     required: true,
     // minlength: 50,
   },
-
-  detailedOverview: String,
-  clientRequirement: String,
-  designChallenges: String,
-  ourSolution: String,
-  resultSummary: String,
-
-  projectManager: String,
-  designTeam: [String],
-  workProcess: [String],
 
   clientReview: String,
 
@@ -131,8 +81,6 @@ const ProjectSchema = new mongoose.Schema({
     index: true,
   },
 
-  metaTitle: String,
-  metaDescription: String,
   tags: [String],
 
   isActive: {
@@ -151,8 +99,10 @@ ProjectSchema.index({
   tags: "text",
 });
 
-ProjectSchema.index({ category: 1, status: 1 });
-ProjectSchema.index({ featured: -1, createdAt: -1 });
+// 📂 Filter projects by category + visibility (public / draft / private)
+ProjectSchema.index({ category: 1, visibility: 1 });
+
+// ⭐ Sort by rating inside budget filter
 ProjectSchema.index({ budgetRange: 1, clientRating: -1 });
 
 const Project = mongoose.model("Project", ProjectSchema)
