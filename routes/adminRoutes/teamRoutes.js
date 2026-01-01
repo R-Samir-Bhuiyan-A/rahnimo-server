@@ -4,14 +4,14 @@ import { verifyJWT } from "../../middlewares/authMiddlewares.js";
 
 const router = express.Router()
 
-router.use(verifyJWT)
+// router.use(verifyJWT)
 
-router.post("/", createMember)
+router.post("/",verifyJWT, createMember)
 
 router.get("/", getMembers)
 
-router.patch("/:id", updateMember)
+router.patch("/:id",verifyJWT, updateMember)
 
-router.delete("/:id", deleteMember)
+router.delete("/:id",verifyJWT, deleteMember)
 
 export default router;
