@@ -1,9 +1,8 @@
 import Team from "../../models/Team.js";
-
+import asyncHandler from "express-async-handler"
 
 /**
  * @desc    Create new team member
- * @route   POST /api/team
  * @access  Admin
  */
 export const createMember = async (req, res) => {
@@ -50,7 +49,7 @@ export const getMembers = async (req, res) => {
  * @route   PATCH /api/team/:id
  * @access  Admin
  */
-export const updateMember = async (req, res) => {
+export const updateMember = asyncHandler(async (req, res) => {
     try {
         const member = await Team.findById(req.params.id);
         if (!member) return res.status(404).json({ message: "Member not found" });
@@ -68,7 +67,25 @@ export const updateMember = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-};
+})
+
+export const getMemberDetails = asyncHandler(async (req, res) => {
+    try {
+        const member = await Team.findById(req.params.id)
+        if (!member) {
+            return res.status(404).json({ message: "Member not found" });
+        }
+        res.status(200).json({
+            success: true,
+            member,
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Server error while fetching product",
+            error: error.message,
+        });
+    }
+})
 
 /**
  * @desc    Delete team member (Soft Delete)

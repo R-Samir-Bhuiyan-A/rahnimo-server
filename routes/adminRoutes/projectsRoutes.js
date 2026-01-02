@@ -1,17 +1,17 @@
 import express from "express"
-import { deleteProjects, getAllProjects, projectAdd, updateProjects } from "../../controller/admin/projectController.js"
+import { deleteProjects, getAllProjects, getProjectDetails, projectAdd, updateProjects } from "../../controller/admin/projectController.js"
 import { verifyJWT } from "../../middlewares/authMiddlewares.js"
 
 const router = express.Router()
 
-router.use(verifyJWT)
-
-router.post("/", projectAdd)
+router.post("/",verifyJWT, projectAdd)
 
 router.get("/", getAllProjects)
 
-router.patch("/:id", updateProjects)
+router.get("/:id", getProjectDetails)
 
-router.delete("/:id", deleteProjects)
+router.patch("/:id",verifyJWT, updateProjects)
+
+router.delete("/:id", verifyJWT, deleteProjects)
 
 export default router

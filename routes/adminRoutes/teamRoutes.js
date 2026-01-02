@@ -1,14 +1,14 @@
 import express from "express";
-import { createMember, deleteMember, getMembers, updateMember } from "../../controller/admin/teamController.js";
+import { createMember, deleteMember, getMemberDetails, getMembers, updateMember } from "../../controller/admin/teamController.js";
 import { verifyJWT } from "../../middlewares/authMiddlewares.js";
 
 const router = express.Router()
 
-// router.use(verifyJWT)
-
 router.post("/",verifyJWT, createMember)
 
 router.get("/", getMembers)
+
+router.get("/:id", getMemberDetails)
 
 router.patch("/:id",verifyJWT, updateMember)
 
