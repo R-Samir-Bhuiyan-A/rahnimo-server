@@ -30,38 +30,21 @@ export const getAllProjects = asyncHandler(async (req, res) => {
 })
 
 export const updateProjects = asyncHandler(async (req, res) => {
-    try {
-        const { id } = req.params
-        const updateProject = req.body
+    const project = await Project.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        { new: true, runValidators: true }
+    );
 
-        const update = await Project.findByIdAndUpdate(
-            id,
-            updateProject,
-            {
-                new: true,
-                runValidators: true
-            }
-        )
-
-        if (!update) {
-            return res.status(404).json({
-                success: false,
-                message: "Project not found",
-            });
-        };
-
-        const io = req.app.get("io");
-        io.to("project").emit("project:updated", update);
-
-        return res.status(200).json({
-            success: true,
-            message: "Project updated successfully",
-            product: update,
-        });
-    } catch (error) {
-        return res.status(500).json({ success: false, message: error.message })
+    if (!project) {
+        return res.status(404).json({ message: "Project not found" });
     }
-})
+
+    req.app.get("io").to("project").emit("project:updated", project);
+
+    res.json(project);
+});
+
 
 export const deleteProjects = asyncHandler(async (req, res) => {
     try {

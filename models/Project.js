@@ -48,7 +48,7 @@ const ProjectSchema = new mongoose.Schema({
 
   galleryImages: {
     type: [String],
-    validate: [arr => arr.length > 0, "At least one gallery image required"]
+    // validate: [arr => arr.length > 0, "At least one gallery image required"]
   },
 
   shortDescription: {

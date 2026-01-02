@@ -10,7 +10,7 @@ router.post("/", projectAdd)
 
 router.get("/", getAllProjects)
 
-router.put("/:id", updateProjects)
+router.patch("/:id", updateProjects)
 
 router.delete("/:id", deleteProjects)
 
