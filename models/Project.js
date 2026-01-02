@@ -18,6 +18,7 @@ const ProjectSchema = new mongoose.Schema({
   category: {
     type: String,
     required: true,
+    lowercase : true,
     index: true,
   },
 
@@ -28,7 +29,7 @@ const ProjectSchema = new mongoose.Schema({
   },
 
   areaSize: {
-    type: String, // 1200 sqft
+    type: String,
   },
 
   budgetRange: {
@@ -45,10 +46,10 @@ const ProjectSchema = new mongoose.Schema({
     required: true,
   },
 
-  // galleryImages: {
-  //   type: [String],
-  //   validate: [arr => arr.length > 0, "At least one gallery image required"]
-  // },
+  galleryImages: {
+    type: [String],
+    validate: [arr => arr.length > 0, "At least one gallery image required"]
+  },
 
   shortDescription: {
     type: String,

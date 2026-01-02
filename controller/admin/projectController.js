@@ -7,6 +7,9 @@ export const projectAdd = asyncHandler(async (req, res) => {
         console.log(newProject)
         const project = await Project.create(newProject)
 
+        const io = req.app.get("io");
+        io.to("project").emit("project:created", project);
+
         return res.status(201).json({
             success: true,
             message: '✅ Project created successfully & cache cleared',
@@ -26,7 +29,7 @@ export const getAllProjects = asyncHandler(async (req, res) => {
     }
 })
 
-export const updateProjects = asyncHandler(async(req, res)=>{
+export const updateProjects = asyncHandler(async (req, res) => {
     try {
         const { id } = req.params
         const updateProject = req.body
@@ -47,6 +50,9 @@ export const updateProjects = asyncHandler(async(req, res)=>{
             });
         };
 
+        const io = req.app.get("io");
+        io.to("project").emit("project:updated", update);
+
         return res.status(200).json({
             success: true,
             message: "Project updated successfully",
@@ -65,6 +71,9 @@ export const deleteProjects = asyncHandler(async (req, res) => {
         if (!exists) return res.status(404).json({ message: "Project not found" })
 
         await Project.findByIdAndDelete(id)
+
+        const io = req.app.get("io");
+        io.to("project").emit("project:deleted", id);
 
         return res.json({ message: "Project removed successfully" });
     } catch (error) {

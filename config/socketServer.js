@@ -29,7 +29,8 @@ export function initSocketServer(httpServer, app) {
         }
     });
     io.on("connection", (socket) => {
-        socket.join("team");   // 🔥 all team users one room
+        socket.join("team");
+        socket.join("project");
     });
 
     // make io accessible via app (or export it)
