@@ -1,4 +1,4 @@
-import { deleteTeamsCache, getTeamsCache, setTeamsCache } from "../../cachingFunction/teamCaching.js";
+import { deleteTeamByIdCache, deleteTeamsCache, getTeamByIdCache, getTeamsCache, setTeamByIdCache, setTeamsCache } from "../../cachingFunction/teamCaching.js";
 import Team from "../../models/Team.js";
 import asyncHandler from "express-async-handler"
 
@@ -42,7 +42,7 @@ export const getMembers = async (req, res) => {
     try {
         const cacheKey = JSON.stringify("all-teams")
         const cachedTeams = await getTeamsCache(cacheKey)
-        if(cachedTeams){
+        if (cachedTeams) {
             return res.status(200).json(cachedTeams)
         }
 
@@ -83,10 +83,20 @@ export const updateMember = asyncHandler(async (req, res) => {
 
 export const getMemberDetails = asyncHandler(async (req, res) => {
     try {
-        const member = await Team.findById(req.params.id)
+        const id = req.params.id
+
+        const cachedTeam = await getTeamByIdCache(id)
+        if (cachedTeam) {
+            return res.status(200).json({ success: true, member: cachedTeam })
+        }
+
+        const member = await Team.findById(id)
         if (!member) {
             return res.status(404).json({ message: "Member not found" });
         }
+
+        await setTeamByIdCache(id, member)
+
         res.status(200).json({
             success: true,
             member,
@@ -107,7 +117,7 @@ export const getMemberDetails = asyncHandler(async (req, res) => {
 export const deleteMember = async (req, res) => {
     try {
         const id = req.params.id
-        
+
         const member = await Team.findById(id);
         if (!member) return res.status(404).json({ message: "Member not found" });
 
@@ -117,6 +127,7 @@ export const deleteMember = async (req, res) => {
         io.emit("team:deleted", req.params.id);
 
         await deleteTeamsCache()
+        await deleteTeamByIdCache(id)
 
         res.json({ message: "Member removed successfully" });
     } catch (error) {
