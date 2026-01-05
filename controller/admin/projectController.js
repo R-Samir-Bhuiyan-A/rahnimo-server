@@ -1,5 +1,6 @@
 import asyncHandler from "express-async-handler"
 import Project from "../../models/Project.js"
+import { getProjectByIdCache, getProjectsCache, setProjectsCache } from "../../cachingFunction/projectCaching.js"
 
 export const projectAdd = asyncHandler(async (req, res) => {
     try {
@@ -22,7 +23,17 @@ export const projectAdd = asyncHandler(async (req, res) => {
 
 export const getAllProjects = asyncHandler(async (req, res) => {
     try {
+        const cacheKey = JSON.stringify("all-projects");
+        const cached = await getProjectsCache(cacheKey)
+
+        if(cached){
+            return res.status(200).json(cached)
+        }
+        
         const projects = await Project.find()
+
+        await setProjectsCache(cacheKey, projects)
+
         return res.status(200).json(projects)
     } catch (error) {
         return res.status(500).json({ success: false, message: error.message });
@@ -31,10 +42,21 @@ export const getAllProjects = asyncHandler(async (req, res) => {
 
 export const getProjectDetails = asyncHandler(async (req, res) => {
     try {
-        const project = await Project.findById(req.params.id)
+        const id = req.params.id
+        
+        const cachedProject = await getProjectByIdCache(id)
+        if(cachedProject){
+            return res.status(200).json({ success: true, project : cachedProject })
+        }
+
+        const project = await Project.findById(id)
+
         if (!project) {
             return res.status(404).json({ message: "Project not found" });
         }
+
+        await set
+
         res.status(200).json({
             success: true,
             project,
