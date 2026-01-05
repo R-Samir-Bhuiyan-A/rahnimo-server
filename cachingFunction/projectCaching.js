@@ -12,7 +12,7 @@ export const getProjectByIdCache = async (id) => {
 };
 
 export const setProjectByIdCache = async (id, project, ttl = 3600) => {
-  await redisClient.setEx(
+  await redisClient.set(
     `project:${id}`,
     JSON.stringify(project),
     "EX",

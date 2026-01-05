@@ -1,3 +1,4 @@
+import { deleteTeamsCache, getTeamsCache, setTeamsCache } from "../../cachingFunction/teamCaching.js";
 import Team from "../../models/Team.js";
 import asyncHandler from "express-async-handler"
 
@@ -24,6 +25,8 @@ export const createMember = async (req, res) => {
         const io = req.app.get("io");
         io.emit("team:created", member);
 
+        await deleteTeamsCache()
+
         // res.status(201).json(member);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -37,8 +40,17 @@ export const createMember = async (req, res) => {
  */
 export const getMembers = async (req, res) => {
     try {
+        const cacheKey = JSON.stringify("all-teams")
+        const cachedTeams = await getTeamsCache(cacheKey)
+        if(cachedTeams){
+            return res.status(200).json(cachedTeams)
+        }
+
         const members = await Team.find({ isActive: true }).sort({ createdAt: -1 });
-        res.json(members);
+
+        await setTeamsCache(cacheKey, members)
+
+        return res.status(200).json(members);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -103,6 +115,8 @@ export const deleteMember = async (req, res) => {
 
         const io = req.app.get("io");
         io.emit("team:deleted", req.params.id);
+
+        await deleteTeamsCache()
 
         res.json({ message: "Member removed successfully" });
     } catch (error) {
