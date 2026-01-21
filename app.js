@@ -15,24 +15,38 @@ app.set("trust proxy", 1);
 // Middleware setup
 app.use(helmet());
 app.use(cors({ 
-    origin: [
-      "http://localhost:3000", 
-      "http://localhost:3001",
-      "https://rahnimo-admin.vercel.app",
-      "https://rahnimo.vercel.app",
-      "https://admin.rahnimo.com",
-      "https://server.rahnimo.com",
-      "https://www.rahnimo.com",
-      "https://rahnimo.com"
-        
-    ], 
-    credentials: true 
+  origin: [
+    "http://localhost:3000", 
+    "http://localhost:3001",
+    "https://rahnimo-admin.vercel.app",
+    "https://rahnimo.vercel.app",
+    "https://admin.rahnimo.com",
+    "https://server.rahnimo.com",
+    "https://www.rahnimo.com",
+    "https://rahnimo.com"
+  ], 
+  credentials: true 
 }));
+
+// ✅ FIX: handle CORS preflight (OPTIONS) for all routes
+app.options("*", cors({ 
+  origin: [
+    "http://localhost:3000", 
+    "http://localhost:3001",
+    "https://rahnimo-admin.vercel.app",
+    "https://rahnimo.vercel.app",
+    "https://admin.rahnimo.com",
+    "https://server.rahnimo.com",
+    "https://www.rahnimo.com",
+    "https://rahnimo.com"
+  ],
+  credentials: true
+}));
+
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan("dev"));
-
 
 const limiter = rateLimit({
   windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS), // মিলিসেকেন্ড
