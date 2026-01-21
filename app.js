@@ -19,6 +19,8 @@ app.use(cors({
       "http://localhost:3001",
       "https://rahnimo-admin.vercel.app",
       "https://rahnimo.vercel.app",
+      "https://admin.rahnimo.com",
+      "https://server.rahnimo.com"
     ], 
     credentials: true 
 }));
