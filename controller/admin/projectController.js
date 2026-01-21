@@ -91,7 +91,7 @@ export const updateProjects = asyncHandler(async (req, res) => {
 
     req.app.get("io").to("project").emit("project:updated", project);
 
-    await deleteProjects()
+    await deleteProjectsCache()
     await deleteProductByIdCache(id)
 
     res.json(project);
@@ -110,11 +110,32 @@ export const deleteProjects = asyncHandler(async (req, res) => {
         const io = req.app.get("io");
         io.to("project").emit("project:deleted", id);
 
-        await deleteProjects()
+        await deleteProjectsCache()
         await deleteProductByIdCache(id)
 
         return res.json({ message: "Project removed successfully" });
     } catch (error) {
         return res.status(500).json({ success: false, message: error.message });
     }
+})
+
+export const removeGalleryImage = asyncHandler(async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { imageUrl } = req.body;
+
+    const project = await Project.findByIdAndUpdate(
+      id,
+      { $pull: { galleryImages: imageUrl } },
+      { new: true }
+    );
+
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+
+    res.json(project);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to remove image" });
+  }
 })
