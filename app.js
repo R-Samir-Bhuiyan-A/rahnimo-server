@@ -14,44 +14,43 @@ app.set("trust proxy", 1);
 
 // Middleware setup
 app.use(helmet());
-app.use(cors({ 
-  origin: [
-    "http://localhost:3000", 
-    "http://localhost:3001",
-    "https://rahnimo-admin.vercel.app",
-    "https://rahnimo.vercel.app",
-    "https://admin.rahnimo.com",
-    "https://server.rahnimo.com",
-    "https://www.rahnimo.com",
-    "https://rahnimo.com"
-  ], 
-  credentials: true 
-}));
 
-// ✅ FIX: handle CORS preflight (OPTIONS) for all routes
-app.options("*", cors({ 
+const corsOptions = {
   origin: [
-    "http://localhost:3000", 
+    "http://localhost:3000",
     "http://localhost:3001",
     "https://rahnimo-admin.vercel.app",
     "https://rahnimo.vercel.app",
     "https://admin.rahnimo.com",
     "https://server.rahnimo.com",
     "https://www.rahnimo.com",
-    "https://rahnimo.com"
+    "https://rahnimo.com",
   ],
-  credentials: true
-}));
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
+
+// ✅ FIX 1: Always answer preflight cleanly on Vercel (do not hit limiter/routes)
+app.use((req, res, next) => {
+  if (req.method === "OPTIONS") return res.sendStatus(204);
+  next();
+});
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan("dev"));
 
+// ✅ FIX 2: Prevent NaN env crashes / bad config on Vercel
 const limiter = rateLimit({
-  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS), // মিলিসেকেন্ড
-  max: parseInt(process.env.RATE_LIMIT_MAX), // max requests per window
+  windowMs: Number(process.env.RATE_LIMIT_WINDOW_MS) || 60_000,
+  max: Number(process.env.RATE_LIMIT_MAX) || 100,
   message: "Too many requests, please try again later.",
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
 app.use(limiter);
