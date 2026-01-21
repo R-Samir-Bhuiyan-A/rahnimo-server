@@ -23,7 +23,8 @@ app.use(cors({
       "https://admin.rahnimo.com",
       "https://server.rahnimo.com",
       "https://www.rahnimo.com",
-      "https://rahnimo.com"
+      "https://rahnimo.com",
+      "https://rahnimo-server-zhhy.onrender.com"
         
     ], 
     credentials: true 
