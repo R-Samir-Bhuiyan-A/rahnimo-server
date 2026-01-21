@@ -11,6 +11,8 @@ export function initSocketServer(httpServer, app) {
                 "http://localhost:3001",
                 "https://rahnimo-admin.vercel.app",
                 "https://rahnimo.vercel.app",
+                "https://rahnimo.com",
+                "https://admin.rahnimo.com",
             ]
         },
     });
