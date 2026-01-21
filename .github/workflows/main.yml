@@ -1,4 +1,4 @@
-name: Deploy Express Backend (cPanel)
+name: Deploy Backend to cPanel (Express)
 
 on:
   push:
@@ -8,13 +8,14 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy via SSH
+      - name: SSH deploy (git pull + install + restart)
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.CPANEL_HOST }}
           username: ${{ secrets.CPANEL_USER }}
-          key: ${{ secrets.CPANEL_SSH_KEY }}
           port: ${{ secrets.CPANEL_PORT }}
+          key: ${{ secrets.CPANEL_SSH_KEY }}
+          passphrase: ${{ secrets.CPANEL_SSH_PASSPHRASE }}
           script: |
             set -e
             cd "${{ secrets.DEPLOY_PATH }}"
