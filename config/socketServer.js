@@ -12,6 +12,9 @@ export function initSocketServer(httpServer, app) {
                 "http://localhost:3001",
                 "https://rahnimo-admin.vercel.app",
                 "https://rahnimo.vercel.app",
+                "https://rahnimo.com",
+                "https://admin.rahnimo.com",
+                "https://www.rahnimo.com"
             ]
         },
     });
@@ -30,10 +33,10 @@ export function initSocketServer(httpServer, app) {
         }
     });
     io.on("connection", (socket) => {
-        
+
         socket.on("get-teams", async () => {
             const teams = await Team.find({ isActive: true }).sort({ createdAt: -1 })
-            
+
             socket.emit("teams", teams);
         });
 
