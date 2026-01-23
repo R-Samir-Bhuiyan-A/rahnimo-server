@@ -1,6 +1,5 @@
 import { Server } from "socket.io";
 import jwt from "jsonwebtoken"
-import Team from "../models/Team.js";
 
 
 export function initSocketServer(httpServer, app) {
@@ -13,8 +12,8 @@ export function initSocketServer(httpServer, app) {
                 "https://rahnimo-admin.vercel.app",
                 "https://rahnimo.vercel.app",
                 "https://rahnimo.com",
+                "https://www.rahnimo.com",
                 "https://admin.rahnimo.com",
-                "https://www.rahnimo.com"
             ]
         },
     });
@@ -33,13 +32,6 @@ export function initSocketServer(httpServer, app) {
         }
     });
     io.on("connection", (socket) => {
-
-        socket.on("get-teams", async () => {
-            const teams = await Team.find({ isActive: true }).sort({ createdAt: -1 })
-
-            socket.emit("teams", teams);
-        });
-
         socket.join("team");
         socket.join("project");
     });

@@ -121,9 +121,9 @@ export const loginUser = asyncHandler(async (req, res) => {
     await user.save();
 
     const accessToken = createAccessToken(user);
-    const rahnimoAdminRefreshToken = createRefreshToken(user);
+    const adminRefreshToken = createRefreshToken(user);
 
-    await setRefreshTokenCache(rahnimoAdminRefreshToken, user._id.toString());
+    await setRefreshTokenCache(adminRefreshToken, user._id.toString());
     const cookieOptions = {
     httpOnly: true,
     secure: process.env.COOKIE_SECURE === "true",
@@ -131,8 +131,7 @@ export const loginUser = asyncHandler(async (req, res) => {
     maxAge: 7 * 24 * 60 * 60 * 1000,
     path: "/",
   };
-
-  res.cookie("rahnimoAdminRefreshToken", rahnimoAdminRefreshToken, cookieOptions);
+  res.cookie("adminRefreshToken", adminRefreshToken, cookieOptions);
 
   return res
   .json({
@@ -152,7 +151,7 @@ export const loginUser = asyncHandler(async (req, res) => {
                 REFRESH
 ==========================================================*/
 export const refreshToken = asyncHandler(async (req, res) => {
-  const token = req.cookies?.rahnimoAdminRefreshToken;
+  const token = req.cookies?.adminRefreshToken;
 
   if (!token) return res.status(401).json({ message: "No refresh token" });
   let payload;
@@ -190,12 +189,12 @@ export const refreshToken = asyncHandler(async (req, res) => {
                 LOGOUT
 ==========================================================*/
 export const logoutUser = asyncHandler(async (req, res) => {
-  const token = req.cookies?.rahnimoAdminRefreshToken;
+  const token = req.cookies?.adminRefreshToken;
   if (token) {
     await deleteRefreshTokenCache(token);
   }
 
-  res.clearCookie("rahnimoAdminRefreshToken", {
+  res.clearCookie("adminRefreshToken", {
     httpOnly: true,
     secure: process.env.COOKIE_SECURE === "true",
     sameSite: process.env.COOKIE_SAMESITE || "lax",
