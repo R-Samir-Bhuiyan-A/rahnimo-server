@@ -11,7 +11,7 @@ export const verifyJWT = async (req, res, next) => {
     const authHeader = req.headers.authorization;
     if (authHeader && authHeader.startsWith("Bearer ")) {
       token = authHeader.split(" ")[1];
-    } else if (req.cookies?.refreshToken) {
+    } else if (req.cookies?.rahnimoAdminRefreshToken) {
       // refresh token shouldn't be used to access protected routes - prefer Authorization header
       return res.status(401).json({ success: false, message: "Use access token" });
     } else {
