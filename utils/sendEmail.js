@@ -2,7 +2,7 @@ import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 dotenv.config();
 
-export const sendEmail = async ({ to, subject, html }) => {
+export const sendEmail = async ({ to, subject, html, text }) => {
   const transporter = nodemailer.createTransport({
     service: "gmail", // or use smtp mail server
     auth: {
@@ -12,9 +12,10 @@ export const sendEmail = async ({ to, subject, html }) => {
   });
 
   await transporter.sendMail({
-    from: `"Rafi Shop" <${process.env.EMAIL_USER}>`,
+    from: `"Rahnimo" <${process.env.EMAIL_USER}>`,
     to,
     subject,
     html,
+    text,
   });
 };

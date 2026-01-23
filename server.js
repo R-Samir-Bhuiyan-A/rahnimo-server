@@ -4,6 +4,7 @@ import app from "./app.js";
 import logger from "./utils/logger.js";
 import connectDB from "./config/db.js";
 import { initSocketServer } from "./config/socketServer.js";
+import { initScheduler } from "./workers/scheduler.js";
 
 // Load environment variables
 dotenv.config();
@@ -21,6 +22,9 @@ const PORT = process.env.PORT || 4000;
 
     // init socket and attach to app
     initSocketServer(server, app);
+
+    // Init Scheduler
+    initScheduler();
 
     // Start server
     server.listen(PORT, () => {

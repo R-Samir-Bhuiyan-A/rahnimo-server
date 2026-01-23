@@ -14,20 +14,25 @@ app.set("trust proxy", 1);
 
 // Middleware setup
 app.use(helmet());
-app.use(cors({ 
-    origin: [
-      "http://localhost:3000", 
-      "http://localhost:3001",
       "https://rahnimo-admin.vercel.app",
       "https://rahnimo.vercel.app",
       "https://admin.rahnimo.com",
       "https://server.rahnimo.com",
       "https://www.rahnimo.com",
       "https://rahnimo.com",
-      "https://rahnimo-server-zhhy.onrender.com"
-        
-    ], 
-    credentials: true 
+app.use(cors({
+  origin: [
+    "http://localhost:3001",
+    "http://localhost:3002",
+    "http://localhost:3003",
+    "http://localhost:3000",
+    "https://rahnimo-admin.vercel.app",
+    "https://rahnimo.vercel.app",
+    "https://rahnimo.com",
+    "https://www.rahnimo.com",
+    "https://admin.rahnimo.com",
+  ],
+  credentials: true
 }));
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
