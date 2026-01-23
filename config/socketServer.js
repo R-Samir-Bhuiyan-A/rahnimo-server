@@ -1,5 +1,8 @@
 import { Server } from "socket.io";
 import jwt from "jsonwebtoken"
+import Team from "../models/Team.js";
+import { deleteProductByIdCache, deleteProjectsCache } from "../cachingFunction/projectCaching.js";
+import Project from "../models/Project.js";
 
 
 export function initSocketServer(httpServer, app) {
@@ -32,6 +35,47 @@ export function initSocketServer(httpServer, app) {
         }
     });
     io.on("connection", (socket) => {
+
+        socket.on("get-teams", async () => {
+            const teams = await Team.find({ isActive: true }).sort({ createdAt: -1 })
+
+            socket.emit("teams", teams);
+        });
+
+        socket.on("get-projects", async () => {
+            const projects = await Project.find()
+
+            socket.emit("projects", projects)
+        })
+
+        socket.on("project:gallery:remove",
+            async ({ projectId, imageUrl }, callback) => {
+                try {
+                    const project = await Project.findByIdAndUpdate(
+                        projectId,
+                        { $pull: { galleryImages: imageUrl } },
+                        { new: true }
+                    );
+
+                    if (!project) {
+                        return callback({
+                            success: false,
+                            message: "Project not found",
+                        });
+                    }
+
+                    io.emit("project:updated", project);
+
+                    await deleteProjectsCache();
+                    await deleteProductByIdCache(projectId);
+
+                    callback({ success: true });
+                } catch (error) {
+                    console.error("Gallery remove error:", error.message);
+                }
+            });
+
+
         socket.join("team");
         socket.join("project");
     });
