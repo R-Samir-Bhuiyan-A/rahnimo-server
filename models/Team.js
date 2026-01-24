@@ -22,6 +22,10 @@ const teamSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    gallery: {
+        type: [String],
+        default: []
+    },
 
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,

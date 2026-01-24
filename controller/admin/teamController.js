@@ -8,7 +8,7 @@ import asyncHandler from "express-async-handler"
  */
 export const createMember = async (req, res) => {
     try {
-        const { name, designation, description, image } = req.body;
+        const { name, designation, description, image, gallery } = req.body;
 
         if (!name || !designation || !image) {
             return res.status(400).json({ message: "Required fields missing" });
@@ -19,6 +19,7 @@ export const createMember = async (req, res) => {
             designation,
             description,
             image,
+            gallery: gallery || [],
             createdBy: req.user?.id
         });
 
@@ -130,6 +131,32 @@ export const deleteMember = async (req, res) => {
         await deleteTeamByIdCache(id)
 
         res.json({ message: "Member removed successfully" });
+    } catch (error) {
+    }
+};
+
+export const removeTeamGalleryItem = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { imageUrl } = req.body;
+
+        const member = await Team.findByIdAndUpdate(
+            id,
+            { $pull: { gallery: imageUrl } },
+            { new: true }
+        );
+
+        if (!member) {
+            return res.status(404).json({ message: "Team member not found" });
+        }
+
+        const io = req.app.get("io");
+        io.emit("team:updated", member);
+
+        await deleteTeamsCache();
+        await deleteTeamByIdCache(id);
+
+        res.json(member);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
