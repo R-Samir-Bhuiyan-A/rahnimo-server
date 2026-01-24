@@ -10,16 +10,9 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const app = express();
-app.set("trust proxy", 1);
 
 // Middleware setup
 app.use(helmet());
-      "https://rahnimo-admin.vercel.app",
-      "https://rahnimo.vercel.app",
-      "https://admin.rahnimo.com",
-      "https://server.rahnimo.com",
-      "https://www.rahnimo.com",
-      "https://rahnimo.com",
 app.use(cors({
   origin: [
     "http://localhost:3001",

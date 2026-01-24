@@ -10,8 +10,10 @@ export function initSocketServer(httpServer, app) {
         path: "/socket.io",
         cors: {
             origin: [
-                "http://localhost:3000",
                 "http://localhost:3001",
+                "http://localhost:3000",
+                "http://localhost:3002",
+                "http://localhost:3003",
                 "https://rahnimo-admin.vercel.app",
                 "https://rahnimo.vercel.app",
                 "https://rahnimo.com",
